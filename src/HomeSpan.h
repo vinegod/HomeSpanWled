@@ -216,7 +216,7 @@ class Span{
   friend class SpanButton;
   friend class SpanWebLog;
   friend class SpanOTA;
-  friend class Network;
+  friend class HomeSpanNetwork;
   friend class HAPClient;
   
   char *displayName;                            // display name for this device - broadcast as part of Bonjour MDNS
@@ -267,7 +267,7 @@ class Span{
   Blinker *statusLED;                               // indicates HomeSpan status
   Blinkable *statusDevice = NULL;                   // the device used for the Blinker
   PushButton *controlButton = NULL;                 // controls HomeSpan configuration and resets
-  Network network;                                  // configures WiFi and Setup Code via either serial monitor or temporary Access Point
+  HomeSpanNetwork network;                                  // configures WiFi and Setup Code via either serial monitor or temporary Access Point
   SpanWebLog webLog;                                // optional web status/log
   TaskHandle_t pollTaskHandle = NULL;               // optional task handle to use for poll() function
   TaskHandle_t loopTaskHandle;                      // Arduino Loop Task handle

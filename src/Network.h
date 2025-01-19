@@ -35,7 +35,7 @@ const int MAX_PWD=64;                               // max number of characters 
 
 ///////////////////////////////
 
-struct Network {
+struct HomeSpanNetwork {
 
   const int MAX_HTTP=4095;                            // max number of bytes in HTTP message
 
