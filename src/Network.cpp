@@ -35,7 +35,7 @@ using namespace Utils;
 
 ///////////////////////////////
 
-void Network::scan(){
+void HomeSpanNetwork::scan(){
 
   int n=WiFi.scanNetworks();
 
@@ -60,7 +60,7 @@ void Network::scan(){
 
 ///////////////////////////////
 
-void Network::serialConfigure(){
+void HomeSpanNetwork::serialConfigure(){
 
   wifiData.ssid[0]='\0';
   wifiData.pwd[0]='\0';
@@ -99,7 +99,7 @@ void Network::serialConfigure(){
 
 ///////////////////////////////
 
-boolean Network::allowedCode(char *s){
+boolean HomeSpanNetwork::allowedCode(char *s){
   return(
     strcmp(s,"00000000") && strcmp(s,"11111111") && strcmp(s,"22222222") && strcmp(s,"33333333") && 
     strcmp(s,"44444444") && strcmp(s,"55555555") && strcmp(s,"66666666") && strcmp(s,"77777777") &&
@@ -108,7 +108,7 @@ boolean Network::allowedCode(char *s){
 
 ///////////////////////////////
 
-void Network::apConfigure(){
+void HomeSpanNetwork::apConfigure(){
 
   Serial.print("*** Starting Access Point: ");
   Serial.print(apSSID);
@@ -249,7 +249,7 @@ void Network::apConfigure(){
 
 ///////////////////////////////
 
-void Network::processRequest(char *body, char *formData){
+void HomeSpanNetwork::processRequest(char *body, char *formData){
   
   String responseHead="HTTP/1.1 200 OK\r\nContent-type: text/html\r\n";
   
@@ -382,7 +382,7 @@ void Network::processRequest(char *body, char *formData){
 
 //////////////////////////////////////
 
-int Network::getFormValue(char *formData, const char *tag, char *value, int maxSize){
+int HomeSpanNetwork::getFormValue(char *formData, const char *tag, char *value, int maxSize){
 
   char *s=strstr(formData,tag);     // find start of tag
   
@@ -416,7 +416,7 @@ int Network::getFormValue(char *formData, const char *tag, char *value, int maxS
 
 //////////////////////////////////////
 
-int Network::badRequestError(){
+int HomeSpanNetwork::badRequestError(){
 
   char s[]="HTTP/1.1 400 Bad Request\r\n\r\n";
   LOG2("\n>>>>>>>>>> ");
