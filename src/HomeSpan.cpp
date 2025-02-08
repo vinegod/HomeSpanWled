@@ -756,9 +756,11 @@ void Span::processSerialCommand(const char *c){
       nvs_commit(charNVS);
       nvs_erase_all(otaNVS);
       nvs_commit(otaNVS);
+      #ifdef HOMEKIT_WIFI_CREDENTIALS
       WiFi.begin("none");
       LOG0("\n*** FACTORY RESET!  Restarting...\n\n");
       reboot();
+      #endif // HOMEKIT_WIFI_CREDENTIALS
     }
     break;
 
