@@ -1,20 +1,20 @@
 /*********************************************************************************
  *  MIT License
- *  
+ *
  *  Copyright (c) 2020-2021 Gregg E. Berman
- *  
+ *
  *  https://github.com/HomeSpan/HomeSpan
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,9 +22,9 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
- *  
+ *
  ********************************************************************************/
- 
+
 #include <DNSServer.h>
 
 #include "Network.h"
@@ -35,7 +35,7 @@ using namespace Utils;
 
 ///////////////////////////////
 
-void Network::scan(){
+void HomeSpanNetwork::scan(){
 
   int n=WiFi.scanNetworks();
 
@@ -60,14 +60,14 @@ void Network::scan(){
 
 ///////////////////////////////
 
-void Network::serialConfigure(){
+void HomeSpanNetwork::serialConfigure(){
 
   wifiData.ssid[0]='\0';
   wifiData.pwd[0]='\0';
 
   Serial.print("*** WiFi Setup - Scanning for Networks...\n\n");
-  
-  scan();         // scan for networks    
+
+  scan();         // scan for networks
 
   for(int i=0;i<numSSID;i++){
     Serial.print("  ");
@@ -76,7 +76,7 @@ void Network::serialConfigure(){
     Serial.print(ssidList[i]);
     Serial.print("\n");
   }
-         
+
   while(!strlen(wifiData.ssid)){
     Serial.print("\n>>> WiFi SSID: ");
     readSerial(wifiData.ssid,MAX_SSID);
@@ -86,10 +86,10 @@ void Network::serialConfigure(){
     Serial.print(wifiData.ssid);
     Serial.print("\n");
   }
-  
+
   while(!strlen(wifiData.pwd)){
     Serial.print(">>> WiFi PASS: ");
-    readSerial(wifiData.pwd,MAX_PWD);    
+    readSerial(wifiData.pwd,MAX_PWD);
     Serial.print(mask(wifiData.pwd,2));
     Serial.print("\n");
   }
@@ -99,16 +99,16 @@ void Network::serialConfigure(){
 
 ///////////////////////////////
 
-boolean Network::allowedCode(char *s){
+boolean HomeSpanNetwork::allowedCode(char *s){
   return(
-    strcmp(s,"00000000") && strcmp(s,"11111111") && strcmp(s,"22222222") && strcmp(s,"33333333") && 
+    strcmp(s,"00000000") && strcmp(s,"11111111") && strcmp(s,"22222222") && strcmp(s,"33333333") &&
     strcmp(s,"44444444") && strcmp(s,"55555555") && strcmp(s,"66666666") && strcmp(s,"77777777") &&
     strcmp(s,"88888888") && strcmp(s,"99999999") && strcmp(s,"12345678") && strcmp(s,"87654321"));
 }
 
 ///////////////////////////////
 
-void Network::apConfigure(){
+void HomeSpanNetwork::apConfigure(){
 
   Serial.print("*** Starting Access Point: ");
   Serial.print(apSSID);
@@ -119,8 +119,8 @@ void Network::apConfigure(){
   homeSpan.statusLED.start(LED_AP_STARTED);
 
   Serial.print("\nScanning for Networks...\n\n");
-  
-  scan();                   // scan for networks    
+
+  scan();                   // scan for networks
 
   for(int i=0;i<numSSID;i++){
     Serial.print("  ");
@@ -128,14 +128,14 @@ void Network::apConfigure(){
     Serial.print(") ");
     Serial.print(ssidList[i]);
     Serial.print("\n");
-  }  
+  }
 
   WiFiServer apServer(80);
   client=0;
-  
+
   TempBuffer <uint8_t> tempBuffer(MAX_HTTP+1);
   uint8_t *httpBuf=tempBuffer.buf;
-  
+
   const byte DNS_PORT = 53;
   DNSServer dnsServer;
   IPAddress apIP(192, 168, 4, 1);
@@ -157,8 +157,8 @@ void Network::apConfigure(){
       homeSpan.statusLED.start(LED_ALERT);
       homeSpan.controlButton.wait();
       Serial.print("  Restarting... \n\n");
-      homeSpan.statusLED.off();        
-      ESP.restart();      
+      homeSpan.statusLED.off();
+      ESP.restart();
     }
 
     if(millis()>alarmTimeOut){
@@ -178,7 +178,7 @@ void Network::apConfigure(){
         Serial.print("  Restarting...\n\n");
         homeSpan.statusLED.start(LED_ALERT);
         delay(1000);
-        homeSpan.statusLED.off();        
+        homeSpan.statusLED.off();
         ESP.restart();
       }
     }
@@ -195,29 +195,29 @@ void Network::apConfigure(){
       LOG2("\n");
       delay(50);                                        // pause to allow data buffer to begin to populate
     }
-    
+
     if(client && client.available()){                   // if connection exists and data is available
 
       LOG2("<<<<<<<<< ");
       LOG2(client.remoteIP());
       LOG2(" <<<<<<<<<\n");
-    
+
       int nBytes=client.read(httpBuf,MAX_HTTP+1);       // read all available bytes up to maximum allowed+1
-       
+
       if(nBytes>MAX_HTTP){                              // exceeded maximum number of bytes allowed
         badRequestError();
         Serial.print("\n*** ERROR:  Exceeded maximum HTTP message length\n\n");
         continue;
       }
 
-      httpBuf[nBytes]='\0';                             // add null character to enable string functions    
+      httpBuf[nBytes]='\0';                             // add null character to enable string functions
       char *body=(char *)httpBuf;                       // char pointer to start of HTTP Body
       char *p;                                          // char pointer used for searches
-      
+
       if(!(p=strstr((char *)httpBuf,"\r\n\r\n"))){
         badRequestError();
         Serial.print("\n*** ERROR:  Malformed HTTP request (can't find blank line indicating end of BODY)\n\n");
-        continue;      
+        continue;
       }
 
       *p='\0';                                          // null-terminate end of HTTP Body to faciliate additional string processing
@@ -229,7 +229,7 @@ void Network::apConfigure(){
       if(nBytes!=strlen(body)+4+cLen){
         badRequestError();
         Serial.print("\n*** ERROR:  Malformed HTTP request (Content-Length plus Body Length does not equal total number of bytes read)\n\n");
-        continue;        
+        continue;
       }
 
       LOG2(body);
@@ -238,7 +238,7 @@ void Network::apConfigure(){
       content[cLen]='\0';                               // add a trailing null on end of any contents, which should always be text-based
 
       processRequest(body, (char *)content);            // process request
-      
+
       LOG2("\n");
 
     } // process Client
@@ -249,10 +249,10 @@ void Network::apConfigure(){
 
 ///////////////////////////////
 
-void Network::processRequest(char *body, char *formData){
-  
+void HomeSpanNetwork::processRequest(char *body, char *formData){
+
   String responseHead="HTTP/1.1 200 OK\r\nContent-type: text/html\r\n";
-  
+
   String responseBody="<html><head><style>"
                         "p{font-size:300%; margin:1em}"
                         "label{font-size:300%; margin:1em}"
@@ -267,19 +267,19 @@ void Network::processRequest(char *body, char *formData){
 
     LOG2(formData);                                                       // print form data
     LOG2("\n------------ END DATA! ------------\n");
-               
+
     LOG1("In Post Configure...\n");
 
     getFormValue(formData,"network",wifiData.ssid,MAX_SSID);
     getFormValue(formData,"pwd",wifiData.pwd,MAX_PWD);
-    
+
     homeSpan.statusLED.start(LED_WIFI_CONNECTING);
 
     responseBody+="<meta http-equiv = \"refresh\" content = \"" + String(waitTime) + "; url = /wifi-status\" />"
                   "<p>Initiating WiFi connection to:</p><p><b>" + String(wifiData.ssid) + "</p>";
 
-    WiFi.begin(wifiData.ssid,wifiData.pwd);              
-  
+    WiFi.begin(wifiData.ssid,wifiData.pwd);
+
   } else
 
   if(!strncmp(body,"POST /save ",11)){                                    // GET SAVE
@@ -289,12 +289,12 @@ void Network::processRequest(char *body, char *formData){
       responseBody+="<p><b>Settings saved!</b></p><p>Restarting HomeSpan.</p><p>Closing window...</p>";
       alarmTimeOut=millis()+2000;
       apStatus=1;
-      
+
     } else {
     responseBody+="<meta http-equiv = \"refresh\" content = \"4; url = /wifi-status\" />"
-                  "<p><b>Disallowed Setup Code - too simple!</b></p><p>Returning to configuration page...</p>";      
+                  "<p><b>Disallowed Setup Code - too simple!</b></p><p>Returning to configuration page...</p>";
     }
-    
+
   } else
 
   if(!strncmp(body,"GET /cancel ",12)){                                   // GET CANCEL
@@ -311,17 +311,17 @@ void Network::processRequest(char *body, char *formData){
       waitTime+=2;
       if(waitTime==12)
         waitTime=2;
-      responseHead+="Refresh: " + String(waitTime) + "\r\n";     
+      responseHead+="Refresh: " + String(waitTime) + "\r\n";
       responseBody+="<p>Re-initiating connection to:</p><p><b>" + String(wifiData.ssid) + "</b></p>";
       responseBody+="<p>(waiting " + String(waitTime) + " seconds to check for response)</p>";
       responseBody+="<p>Access Point termination in " + String((alarmTimeOut-millis())/1000) + " seconds.</p>";
       responseBody+="<center><button onclick=\"document.location='/hotspot-detect.html'\">Cancel</button></center>";
       WiFi.begin(wifiData.ssid,wifiData.pwd);
-      
+
     } else {
-      
+
       homeSpan.statusLED.start(LED_AP_CONNECTED);   // slow double-blink
-      
+
       responseBody+="<p>SUCCESS! Connected to:</p><p><b>" + String(wifiData.ssid) + "</b></p>";
       responseBody+="<p>You may enter new 8-digit Setup Code below, or leave blank to retain existing code.</p>";
 
@@ -330,11 +330,11 @@ void Network::processRequest(char *body, char *formData){
                     "<center><input size=\"32\" type=\"tel\" id=\"code\" name=\"code\" placeholder=\"12345678\" pattern=\"[0-9]{8}\" maxlength=8></center>"
                     "<center><input style=\"font-size:300%\" type=\"submit\" value=\"SAVE Settings\"></center>"
                     "</form>";
-                    
+
       responseBody+="<center><button style=\"font-size:300%\" onclick=\"document.location='/cancel'\">CANCEL Configuration</button></center>";
     }
-  
-  } else                                                                
+
+  } else
 
   if(!strstr(body,"wispr") && !strncmp(body,"GET /hotspot-detect.html ",25)){                             // GET LANDING-PAGE, but only if request does NOT contain "wispr" user agent
 
@@ -351,18 +351,18 @@ void Network::processRequest(char *body, char *formData){
                   "<datalist id=\"network\">";
 
     for(int i=0;i<numSSID;i++)
-        responseBody+="<option value=\"" + String(ssidList[i]) + "\">" + String(ssidList[i]) + "</option>";  
-    
+        responseBody+="<option value=\"" + String(ssidList[i]) + "\">" + String(ssidList[i]) + "</option>";
+
     responseBody+="</datalist><br><br>"
                   "<label for=\"pwd\">WiFi Password:</label>"
                   "<center><input size=\"32\" type=\"password\" id=\"pwd\" name=\"pwd\" required maxlength=" + String(MAX_PWD) + "></center>"
                   "<br><br>";
-                  
+
     responseBody+="<center><input style=\"font-size:300%\" type=\"submit\" value=\"SUBMIT\"></center>"
                   "</form>";
 
-    responseBody+="<center><button style=\"font-size:300%\" onclick=\"document.location='/cancel'\">CANCEL Configuration</button></center>";                  
-                  
+    responseBody+="<center><button style=\"font-size:300%\" onclick=\"document.location='/cancel'\">CANCEL Configuration</button></center>";
+
   }
 
   responseHead+="\r\n";               // add blank line between reponse header and body
@@ -377,15 +377,15 @@ void Network::processRequest(char *body, char *formData){
   client.print(responseHead);
   client.print(responseBody);
   LOG2("------------ SENT! --------------\n");
-    
+
 } // processRequest
 
 //////////////////////////////////////
 
-int Network::getFormValue(char *formData, const char *tag, char *value, int maxSize){
+int HomeSpanNetwork::getFormValue(char *formData, const char *tag, char *value, int maxSize){
 
   char *s=strstr(formData,tag);     // find start of tag
-  
+
   if(!s)                            // if not found, return -1
     return(-1);
 
@@ -394,9 +394,9 @@ int Network::getFormValue(char *formData, const char *tag, char *value, int maxS
   if(!v)                            // if not found, return -1 (this should not happen)
     return(-1);
 
-  v++;                              // point to begining of value 
+  v++;                              // point to begining of value
   int len=0;                        // track length of value
-  
+
   while(*v!='\0' && *v!='&' && len<maxSize){      // copy the value until null, '&', or maxSize is reached
     if(*v=='%'){                                  // this is an escaped character of form %XX
       v++;
@@ -410,12 +410,12 @@ int Network::getFormValue(char *formData, const char *tag, char *value, int maxS
 
   *value='\0';                      // add terminating null
   return(len);
-  
+
 }
 
 //////////////////////////////////////
 
-int Network::badRequestError(){
+int HomeSpanNetwork::badRequestError(){
 
   char s[]="HTTP/1.1 400 Bad Request\r\n\r\n";
   LOG2("\n>>>>>>>>>> ");
@@ -424,7 +424,7 @@ int Network::badRequestError(){
   LOG2(s);
   client.print(s);
   LOG2("------------ SENT! --------------\n");
-  
+
   delay(1);
   client.stop();
 
