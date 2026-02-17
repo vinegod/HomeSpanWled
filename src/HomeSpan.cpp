@@ -108,6 +108,9 @@ void Span::init(){
   WiFi.persistent(false);                                 // do not permanently store WiFi configuration data
   WiFi.setScanMethod(WIFI_ALL_CHANNEL_SCAN);              // scan ALL channels - do NOT stop at first SSID match, else you could connect to weaker BSSID
   WiFi.setSortMethod(WIFI_CONNECT_AP_BY_SIGNAL);          // sort scan data by RSSI and connect to strongest BSSID with matching SSID
+
+  WiFi.mode(WIFI_STA);                                    // start up in STA mode, which enables WiFi radio to provide entropy source for random numbers
+  delay(1);                                               // required to yield (prevents crashing)
   
   networkEventQueue=xQueueCreate(10,sizeof(arduino_event_t));             // queue to transmit network events
   
