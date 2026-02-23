@@ -1110,7 +1110,7 @@ void HAPClient::getStatusURL(HAPClient *hapClient, void (*callBack)(const char *
   hapOut << "<style>body {background-color:lightblue;} th, td {padding-right: 10px; padding-left: 10px; border:1px solid black;}" << homeSpan.webLog.css.c_str() << "</style></head>\n";
   hapOut << "<body class=bod1><h2>" << homeSpan.displayName << "</h2>\n";
   
-  hapOut << "<table class=tab1>\n";
+  hapOut << "<table class=\"infoTable tab1\">\n";
   hapOut << "<tr><td>Up Time:</td><td>" << uptime << "</td></tr>\n";
   hapOut << "<tr><td>Current Time:</td><td>" << clocktime << "</td></tr>\n";
   hapOut << "<tr><td>Boot Time:</td><td>" << homeSpan.webLog.bootTime << "</td></tr>\n"; 
@@ -1159,7 +1159,7 @@ void HAPClient::getStatusURL(HAPClient *hapClient, void (*callBack)(const char *
   hapOut << "</table>\n";
   hapOut << "<p></p>";
 
-  hapOut << "<table class=clientTable><tr><th>Client #</th><th>IP Address</th><th>Controller</th></tr>\n";
+  hapOut << "<table class=\"clientTable tab2\"><tr><th>Client #</th><th>IP Address</th><th>Controller</th></tr>\n";
   for(auto it=homeSpan.hapList.begin(); it!=homeSpan.hapList.end(); ++it){
     hapOut << "<tr><td>" << (*it).clientNumber << "</td><td>" << (*it).client.remoteIP().toString().c_str() << "</td><td>";
     if((*it).cPair)          
@@ -1172,7 +1172,7 @@ void HAPClient::getStatusURL(HAPClient *hapClient, void (*callBack)(const char *
   hapOut << "<p></p>";
   
   if(homeSpan.webLog.maxEntries>0){
-    hapOut << "<table class=tab2><tr><th>Entry</th><th>Up Time</th><th>Log Time</th><th>Client</th><th>Message</th></tr>\n";
+    hapOut << "<table class=\"logTable tab2\"><tr><th>Entry</th><th>Up Time</th><th>Log Time</th><th>Client</th><th>Message</th></tr>\n";
     int lastIndex=homeSpan.webLog.nEntries-homeSpan.webLog.maxEntries;
     if(lastIndex<0)
       lastIndex=0;
