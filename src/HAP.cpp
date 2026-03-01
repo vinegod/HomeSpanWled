@@ -1147,7 +1147,9 @@ void HAPClient::getStatusURL(HAPClient *hapClient, void (*callBack)(const char *
   mbedtls_version_get_string_full(mbtlsv);
   hapOut << "<tr><td>MbedTLS Version:</td><td>" << mbtlsv << "</td></tr>\n";
   
-  hapOut << "<tr><td>HomeKit Status:</td><td>" << homeSpan.statusString(homeSpan.getStatus()) << "</td></tr>\n";   
+  auto [ stat, statTime] = homeSpan.getStatus();
+  hapOut << "<tr><td>HomeKit Status:</td><td>" << homeSpan.statusString(stat) << "</td></tr>\n";
+  hapOut << "<tr><td>Status Duration:</td><td>" << statTime << " sec</td></tr>\n";
   hapOut << "<tr><td>Max Log Entries:</td><td>" << homeSpan.webLog.maxEntries << "</td></tr>\n"; 
 
   if(homeSpan.weblogCallback){

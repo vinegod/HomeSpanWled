@@ -289,6 +289,8 @@ class Span{
   boolean forceConfigIncrement=false;           // flag to indicate whether configuration number (MDNS C# value) should be incremented even if database config has not changed
   char *compileTime=NULL;                       // optional compile time string --- can be set with call to setCompileTime()
   HS_STATUS hsStatus;                           // current HomeSpan status
+  uint32_t hsStatusTime;                        // timestamp (in seconds) of latest recent HomeSpan status update
+  std::shared_mutex hsStatusMux;                // shared read/write lock
    
   nvs_handle charNVS;                           // handle for non-volatile-storage of Characteristics data
   nvs_handle wifiNVS=0;                         // handle for non-volatile-storage of WiFi data
@@ -439,7 +441,7 @@ class Span{
   Span& enableAutoStartAP(){autoStartAPEnabled=true;return(*this);}                      // enables auto start-up of Access Point when WiFi Credentials not found
   Span& setWifiCredentials(const char *ssid, const char *pwd);                           // sets WiFi Credentials
   Span& setConnectionTimes(uint32_t minTime, uint32_t maxTime, uint8_t nSteps);          // sets min/max WiFi connection times (in seconds) and number of steps
-  HS_STATUS getStatus(){return(hsStatus);};                                              // returns current HomeSpan status
+  std::pair<HS_STATUS,uint32_t> getStatus();                                             // returns current HomeSpan status and duration
   Span& setStatusCallback(void (*f)(HS_STATUS status)){statusCallback=f;return(*this);}  // sets an optional user-defined function to call when HomeSpan status changes
   const char* statusString(HS_STATUS s);                                                 // returns char string for HomeSpan status change messages
   Span& setPairingCode(const char *s, boolean progCall=true);                            // sets the Pairing Code - use is NOT recommended.  Use 'S' from CLI instead

@@ -184,7 +184,7 @@ void Span::poll() {
 
 void Span::pollTask() {
 
-  std::unique_lock pollLock(homeSpan.pollMutex);
+  std::unique_lock pollLock(pollMutex);
 
   if(!strlen(category)){
     LOG0("\n** FATAL ERROR: Cannot start homeSpan polling without an initial call to homeSpan.begin()!\n** PROGRAM HALTED **\n\n");
@@ -283,7 +283,7 @@ void Span::pollTask() {
     }
   }
 
-  if(getStatus()==triggerStatus)
+  if(getStatus().first==triggerStatus)
     resetStatus();
       
   snapTime=millis();                                     // snap the current time for use in ALL loop routines
@@ -1398,10 +1398,19 @@ void Span::getWebLog(void (*f)(const char *, void *), void *user_data){
 
 ///////////////////////////////
 
-void Span::setStatus(HS_STATUS hst){  
-  hsStatus=hst;
+std::pair<HS_STATUS,uint32_t> Span::getStatus(){
 
-  switch(hsStatus){
+  std::shared_lock readLock(hsStatusMux);            // wait for mux to be unlocked, or already locked non-exclusively, and then lock *non-exclusively* to prevent writing in vLog
+  return{hsStatus, millis()/1000-hsStatusTime};
+}
+
+///////////////////////////////
+
+void Span::setStatus(HS_STATUS hst){
+
+  std::unique_lock writeLock(hsStatusMux);  // wait for mux to be unlocked and then lock *exclusively* so write can proceed uninterrupted
+
+  switch(hst){
     case HS_WIFI_NEEDED: statusLED->start(300,0.5,1,2700); break;                 // slow single-blink
     case HS_WIFI_CONNECTING: statusLED->start(2000); break;                       // slow flashing
     case HS_ETH_CONNECTING: statusLED->start(2000); break;                        // slow flashing
@@ -1426,10 +1435,15 @@ void Span::setStatus(HS_STATUS hst){
     case HS_AP_TERMINATED: statusLED->start(100); break;                          // rapid flashing
     case HS_OTA_STARTED: homeSpan.statusLED->start(300,0.5,3,400); break;         // medium triple-blink
     case HS_WIFI_SCANNING: homeSpan.statusLED->start(300,0.8,3,400); break;       // medium inverted triple-blink
-    default: return;                                                              
+    default: return;                                                              // ignore unknown status type - should not occur                                                             
   }
 
-  if(statusCallback)
+  hsStatus=hst;                             // save new status
+  hsStatusTime=esp_timer_get_time()/1e6;    // save timestamp (in seconds) of status change
+
+  writeLock.unlock();                       // unlock before calling optional callback
+
+  if(statusCallback)                        // call optional user callback if defined
     statusCallback(hsStatus);
 }
 
