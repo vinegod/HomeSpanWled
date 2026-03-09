@@ -122,7 +122,7 @@ void Span::init(){
 
 void Span::begin(Category catID, const char *_displayName, const char *_hostNameBase, const char *_modelName){
 
-  loopTaskHandle=xTaskGetCurrentTaskHandle();                 // a roundabout way of getting the current task handle
+  loopTaskHandle=xTaskGetCurrentTaskHandle();                 // get the current task handle
   
   asprintf(&displayName,"%s",_displayName);
   asprintf(&hostNameBase,"%s",_hostNameBase);
@@ -720,6 +720,12 @@ void Span::processSerialCommand(const char *c){
       LOG0("\nReset Reason:     %s",Utils::resetReason());
       LOG0("\nMAC Address:      %s",Network.macAddress().c_str());
       LOG0("\nInterface:        %s",ethernetEnabled?"ETHERNET":"WIFI");
+      LOG0("\nLoop Task:        Core-%d, Priority=%d",xTaskGetCoreID(loopTaskHandle),uxTaskPriorityGet(loopTaskHandle));
+      LOG0("\nAuto-Poll Task:   ");
+      if(!pollTaskHandle)
+        LOG0("N/A");
+      else
+        LOG0("Core-%d, Priority=%d",xTaskGetCoreID(pollTaskHandle),uxTaskPriorityGet(pollTaskHandle));
       LOG0("\nDevice Name:      %s\n\n",displayName);
     }
     break;
