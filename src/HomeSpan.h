@@ -451,6 +451,7 @@ class Span{
   Span& setWifiBegin(void (*f)(const char *, const char *)){wifiBegin=f;return(*this);}  // sets an optional user-defined function to over-ride WiFi.begin() with additional logic
   Span& setPollingCallback(void (*f)()){pollingCallback=f;return(*this);}                // sets an optional user-defined function to call upon INITIAL completion of the polling task (only called once)
   Span& useEthernet(){ethernetEnabled=true;return(*this);}                               // force use of Ethernet instead of WiFi, even if ETH not called or Ethernet card not detected
+  boolean usingEthernet(){return(ethernetEnabled);}                                      // returns true if Ethernet is being used, else false if WiFi is being used
   Span& forceNewConfigNumber(){forceConfigIncrement=true;return(*this);}                 // force configuration increment when updateDatabase() is called even if database has not changed 
 
   Span& setGetCharacteristicsCallback(void (*f)(const char *)){getCharacteristicsCallback=f;return(*this);}                    // sets an optional callback called whenever HomeKit sends a getCharacteristics request
