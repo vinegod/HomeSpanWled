@@ -1,5 +1,33 @@
 # HomeSpan Status
 
+
+|HomeSpan Status|LED Pattern|
+|---|---|
+|HS_WIFI_NEEDED|![](images/ledPatterns/slowSingleBlink.svg)|
+|HS_WIFI_CONNECTING|![](images/ledPatterns/slowFlashing.svg)|
+|HS_PAIRING_NEEDED||
+|HS_PAIRED||
+|HS_CONNECTED||
+|HS_ENTERING_CONFIG_MODE||
+|HS_CONFIG_MODE_EXIT||
+|HS_CONFIG_MODE_REBOOT||
+|HS_CONFIG_MODE_LAUNCH_AP||
+|HS_CONFIG_MODE_UNPAIR||
+|HS_CONFIG_MODE_ERASE_WIFI||
+|HS_CONFIG_MODE_EXIT_SELECTED||
+|HS_CONFIG_MODE_REBOOT_SELECTED||
+|HS_CONFIG_MODE_LAUNCH_AP_SELECTED||
+|HS_CONFIG_MODE_UNPAIR_SELECTED||
+|HS_CONFIG_MODE_ERASE_WIFI_SELECTED||
+|HS_REBOOTING||
+|HS_FACTORY_RESET||
+|HS_AP_STARTED||
+|HS_AP_CONNECTED||
+|HS_AP_TERMINATED||
+|HS_OTA_STARTED||
+|HS_WIFI_SCANNING||
+|HS_ETH_CONNECTING||
+
 The optional ***homeSpan*** method, `void setStatusCallback(void (*func)(HS_STATUS status))`, can be used to create a callback function, *func*, that HomeSpan calls whenever its status changes.  HomeSpan passes *func* a single argument, *status*, of type *HS_STATUS*, defined as follows:
 
 ```C++
