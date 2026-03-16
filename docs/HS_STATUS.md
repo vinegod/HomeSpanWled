@@ -15,6 +15,11 @@
 |HS_CONFIG_MODE_LAUNCH_AP|3. Launch Access Point|<img src="images/ledPatterns/fastBlink3.svg" width=300>|
 |HS_CONFIG_MODE_UNPAIR|4. Unpair Device|<img src="images/ledPatterns/fastBlink4.svg" width=300>|
 |HS_CONFIG_MODE_ERASE_WIFI|5. Erase WiFi Credentials|<img src="images/ledPatterns/fastBlink5.svg" width=300>|
+|HS_CONFIG_MODE_EXIT_SELECTED|Exiting Command Mode...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_REBOOT_SELECTED|Rebooting Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_LAUNCH_AP_SELECTED|Launching Access Point...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_UNPAIR_SELECTED|Unpairing Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_ERASE_WIFI_SELECTED|Erasing WiFi Credentials...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
 
 
 The optional ***homeSpan*** method, `void setStatusCallback(void (*func)(HS_STATUS status))`, can be used to create a callback function, *func*, that HomeSpan calls whenever its status changes.  HomeSpan passes *func* a single argument, *status*, of type *HS_STATUS*, defined as follows:
