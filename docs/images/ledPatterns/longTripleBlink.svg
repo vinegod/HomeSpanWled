@@ -13,4 +13,25 @@
   <rect width="24" height="30" x="190" y="0" fill="red" />
   <rect width="6" height="30" x="214" y="0" fill="lightgrey" />
   <rect width="40" height="30" x="220" y="0" fill="lightgrey" />
+
+  <rect width="24" height="30" x="260" y="0" fill="red" />
+  <rect width="6" height="30" x="284" y="0" fill="lightgrey" />
+  <rect width="24" height="30" x="290" y="0" fill="red" />
+  <rect width="6" height="30" x="314" y="0" fill="lightgrey" />
+  <rect width="24" height="30" x="320" y="0" fill="red" />
+  <rect width="6" height="30" x="344" y="0" fill="lightgrey" />
+  <rect width="40" height="30" x="350" y="0" fill="lightgrey" />
+  <rect width="24" height="30" x="390" y="0" fill="red" />
+  <rect width="6" height="30" x="414" y="0" fill="lightgrey" />
+  <rect width="24" height="30" x="420" y="0" fill="red" />
+  <rect width="6" height="30" x="444" y="0" fill="lightgrey" />
+  <rect width="24" height="30" x="450" y="0" fill="red" />
+  <rect width="6" height="30" x="474" y="0" fill="lightgrey" />
+  <rect width="40" height="30" x="480" y="0" fill="lightgrey" />
+
+  <rect width="24" height="30" x="520" y="0" fill="red" />
+  <rect width="6" height="30" x="544" y="0" fill="lightgrey" />
+  <rect width="24" height="30" x="550" y="0" fill="red" />
+  <rect width="6" height="30" x="574" y="0" fill="lightgrey" />
+  <rect width="20" height="30" x="580" y="0" fill="red" />
 </svg>
