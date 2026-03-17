@@ -20,6 +20,13 @@
 |HS_CONFIG_MODE_LAUNCH_AP_SELECTED|Launching Access Point...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
 |HS_CONFIG_MODE_UNPAIR_SELECTED|Unpairing Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
 |HS_CONFIG_MODE_ERASE_WIFI_SELECTED|Erasing WiFi Credentials...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_REBOOTING|REBOOTING|<img src="images/ledPatterns/off.svg" width=300>|
+|HS_FACTORY_RESET|Performing Factory Reset...|<img src="images/ledPatterns/off.svg" width=300>|
+|HS_AP_STARTED|Access Point Started|<img src="images/ledPatterns/rapidDoubleBlink.svg" width=300>|
+|HS_AP_CONNECTED|Access Point Connected|<img src="images/ledPatterns/mediumDoubleBlink.svg" width=300>|
+|HS_AP_TERMINATED|Access Point Terminated|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_OTA_STARTED|OTA Update Started|<img src="images/ledPatterns/mediumTripleBlink.svg" width=300>|
+|HS_WIFI_SCANNING|WiFi Scanning Started|<img src="images/ledPatterns/longTripleBlink.svg" width=300>|
 
 
 The optional ***homeSpan*** method, `void setStatusCallback(void (*func)(HS_STATUS status))`, can be used to create a callback function, *func*, that HomeSpan calls whenever its status changes.  HomeSpan passes *func* a single argument, *status*, of type *HS_STATUS*, defined as follows:
