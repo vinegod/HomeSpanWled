@@ -20,7 +20,7 @@ HomeSpan is packaged as a standard Arduino library and can be installed either a
 
 #### Step 4: Acquire an ESP32 Board
 
-ESP32 development boards are widely available in different configurations from most electronics hobby sites, such as [Adafruit](https://www.adafruit.com) and [Sparkfun](https://www.sparkfun.com).  HomeSpan works with any ESP32 supported by the [Arduino-ESP32 Core](https://docs.espressif.com/projects/arduino-esp32/en/latest/getting_started.html#supported-soc-s), including the original ESP32, the ESP32-S2 and ESP32&#8209;S3, and the ESP32-C3.
+ESP32 development boards are widely available in different configurations from most electronics hobby sites, such as [Adafruit](https://www.adafruit.com) and [Sparkfun](https://www.sparkfun.com).  See the main HomeSpan [README](../README.md) page for a list of ESP32 boards that are supported by HomeSpan.
 
 #### Step 5: Install any required USB Drivers
 
