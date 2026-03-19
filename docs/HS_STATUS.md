@@ -16,6 +16,7 @@ The first column in the table below lists all possible states for HomeSpan when 
 
 |HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
+|HS_INITIALIZING|Initializing|<img src="images/ledPatterns/off.svg" width=300>|
 |HS_WIFI_NEEDED|WiFi Credentials Needed|<img src="images/ledPatterns/slowSingleBlink.svg" width=300>|
 |HS_WIFI_CONNECTING|WiFi Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
 |HS_ETH_CONNECTING|Ethernet Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
@@ -25,6 +26,10 @@ The first column in the table below lists all possible states for HomeSpan when 
 |HS_WIFI_SCANNING|WiFi Scanning Started|<img src="images/ledPatterns/longTripleBlink.svg" width=300>|
 
 </div>
+
+When HomeSpan first starts, its state is set to HS_INITIALIZING.  During this period HomeSpan executes all of the code in the `setup()` portion of a HomeSpan sketch.  After completion HomeSpan then starts its loop of repeatedly calling `homeSpan.poll()`.  Upon the very first call to `homeSpan.poll()` HomeSpan tries to connect to your home network and sets its state as follows:
+
+Unless an Ethernet interface has been configured in the `setup()` portion of the sketch, HomeSpan tries to connect to your WiFi network using whatever WiFi Credentials you've previously entered or specified in your sketch.  If HomeSpan does not find any WiFi Credentials it sets its state to HS_WIFI_NEEDED.  If WiFi Credentials are instead found, it uses those credentials to connect to your WiFi network and sets its state to HS_WIFI_CONNECTING.  Alternatively, if you've configured an Ethernet interface in the `setup()` portion of your sketch, HomeSpan will attempt to connect to your home network via Ethernet and sets its state to HS_ETH_CONNECTING.  For details on configuring HomeSpan's WiFi and Ethernet connectivity options, please see...
 
 |HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
