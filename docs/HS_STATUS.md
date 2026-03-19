@@ -1,8 +1,8 @@
 # HomeSpan Status LED and Control Button
 
-In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating status.  This status can be read programmatically from within your sketch (see the [Reference API](Referencd.md) for details) but is more often communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
+In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating **status**.  This status can be read programmatically from within your sketch (see the [Reference API](Reference.md) for details) but is more often communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
 
-In addition to having a physical LED on your device that can be used as the Status LED, you must also configure HomeSpan to use that LED as the Status LED by calling `homeSpan.setStatusDevice()` near the top of your HomeSpan sketch.  This function has a number of parameters and options - please see the [Reference API](Referencd.md) for details.
+To enable HomeSpan's Status LED functionality, simple call `homeSpan.enableStatusLED()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
 
 
 |HomeSpan Status|Description|Status LED Pattern|
