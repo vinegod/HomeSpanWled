@@ -1,25 +1,23 @@
-# HomeSpan Status LED and Control Button
+# HomeSpan States, the HomeSpan Status LED and the HomeSpan Control Button
 
-In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating **state**.  This state can be read programmatically from within your sketch (see the [Reference API](Reference.md) for details) but is more often communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
+In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating **state** (e.g. connecting to WiFi, updating via OTA, etc.).  This state can be read programmatically from within your sketch (see [Reading the HomeSpan State]() below for details) but is more often communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
 
 To enable HomeSpan's Status LED functionality, simple call `homeSpan.enableStatusLED()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
 
-### Normal Operating States
+The tables below present all possible HomeSpan states, a brief description of each state, and a graphic representation of the associated flashing pattern HomeSpan displays on the Status LED (if implemented) in each state.  Note that graphic representations are all scaled to show the first 6 seconds of each pattern, which should be always sufficient to make the pattern (number of blinks, duration, etc.) obvious.
 
-The first column in the table below lists all possible states for HomeSpan when it is running in its normal operating mode.[^normal]  The second column provides a brief description of each state.  And the third column provides a graphic representation of the associated flashing pattern HomeSpan displays on the Status LED (if implemented) when HomeSpan is in each state.  Note that graphic representations are all scaled to show the first 6 seconds of each pattern, which should be always sufficient to make the pattern (number of blinks, duration, etc.) obvious.
+### Primary Operating States
 
-[^normal]:  HomeSpan is in its normal operating mode when it is repeatedly calling `homeSpan.poll()`, either because you explicitly added `homeSpan.poll()` to the main `loop()` of your HomeSpan sketch, or you called `homeSpan.autoPoll()` at the end of the `setup()` portion of your sketch, which spawns a separate task that repeatedly calls `homeSpan.poll()` for you in the background.
+The primary operating states below indicate increasing levels of readiness for a fully complete and secure connection between your HomeSpan device and your HomeKit hub(s).
 
 <div align="center">
 
-#### Normal Operating States
-
 |HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
-|HS_INITIALIZING|Initializing|<img src="images/ledPatterns/off.svg" width=300>|
+|HS_SETUP|Setting up|<img src="images/ledPatterns/off.svg" width=300>|
+|HS_ETH_CONNECTING|Ethernet Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
 |HS_WIFI_NEEDED|WiFi Credentials Needed|<img src="images/ledPatterns/slowSingleBlink.svg" width=300>|
 |HS_WIFI_CONNECTING|WiFi Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
-|HS_ETH_CONNECTING|Ethernet Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
 |HS_PAIRING_NEEDED|Device not yet Paired|<img src="images/ledPatterns/slowDoubleBlink.svg" width=300>|
 |HS_PAIRED|Paired and waiting for HomeKit|<img src="images/ledPatterns/slowDoubleBlinkInverted.svg" width=300>|
 |HS_CONNECTED|Device is Connected to HomeKit|<img src="images/ledPatterns/on.svg" width=300>|
@@ -27,9 +25,19 @@ The first column in the table below lists all possible states for HomeSpan when 
 
 </div>
 
-When HomeSpan first starts, its state is set to HS_INITIALIZING.  During this period HomeSpan executes all of the code in the `setup()` portion of a HomeSpan sketch.  After completion HomeSpan then starts its loop of repeatedly calling `homeSpan.poll()`.  Upon the very first call to `homeSpan.poll()` HomeSpan tries to connect to your home network and sets its state as follows:
+When HomeSpan first starts its state is set to **HS_SETUP** and it executes all the code in the `setup()` portion of your sketch.  Once complete, HomeSpan starts executing the code in the 'loop()` portion of your sketch, which should include a call to `homeSpan.poll()` unless you already called `homeSpan.autoPoll()` in the `setup()` portion of the sketch.  In either case, upon the very first call to `homeSpan.poll()`, HomeSpan begins by trying to connect to your home network.
 
-Unless an Ethernet interface has been configured in the `setup()` portion of the sketch, HomeSpan tries to connect to your WiFi network using whatever WiFi Credentials you've previously entered or specified in your sketch.  If HomeSpan does not find any WiFi Credentials it sets its state to HS_WIFI_NEEDED.  If WiFi Credentials are instead found, it uses those credentials to connect to your WiFi network and sets its state to HS_WIFI_CONNECTING.  Alternatively, if you've configured an Ethernet interface in the `setup()` portion of your sketch, HomeSpan will attempt to connect to your home network via Ethernet and sets its state to HS_ETH_CONNECTING.  For details on configuring HomeSpan's WiFi and Ethernet connectivity options, please see...
+If you've configured HomeSpan to use an Ethernet interface, HomeSpan sets its state to **HS_ETH_CONNECTING** and tries to connect to your home network via Ethernet.  Otherwise, HomeSpan checks for stored WiFi Credentials and, if found, sets its state to **HS_WIFI_CONNECTING** and tries to connect to your home network via WiFi using those credentials.  If you've not yet stored any WiFi Credentialds (not have explicitly specified them in your sketch), HomeSpan sets its state to **HS_WIFI_NEEDED**, alerting you that it cannot proceed to connect to your home network until you provide your WiFI Credentials (or, alternatively, configure an Ethernet interface).  Please see [HomeSpan WiFi and Ethernet Connectivity](Networks.md) for complete details on how to specify and establish connectivity between HomeSpan and your home network.
+
+Once connectivity between HomeSpan and your home network have been established, if you have already paired the device with HomeKit, HomeSpan sets it state to **HS_PAIRED**, which indicates it is ready to receive secure connection requests from your HomeKit Hub(s).  If instead you have not yet paired the device with HomeKit, HomeSpan sets its state to **HS_PAIRING_NEEDED**, alerting you that it cannot connect to HomeKit until you use the Home App on your iPhone to pair the device.
+
+While in the **HS_PAIRED** state, HomeSpan waits for an inbound connection request from a HomeKit Hub.  This is because HomeKit devices cannot *initiate* an outbound connection directly to a HomeKit Hub.  Bi-directional communication between HomeKit and a HomeKit Hub is of course possible, but only once HomeSpan receives an inbound request from a HomeKit Hub and has verfified the authentication key provided match those of the pairing data stored.
+
+Upon receiving and verifying its first connection from a HomeKit Hub, HomeSpan sets its state to **HS_CONNECTED**.  **This is the desired operating state of HomeSpan. It indicates your device has fully established one or more secure connections to one or more HomeKit Hubs and can be controlled via your Home App or Siri.*
+
+Note the that HomeSpan states above can change at any time in response to changes in connectivity.  For example, if your HomeKit Hub terminates all of its secure connections with your device (for whatever reason) even though you did not unpair the device, HomeSpan will revert its state to **HS_PAIRED**, alerting you that it is waiting for HomeKit to re-establish a secure connection.  Until it does, you will not be able to control the device from your Home App.  As described more fully below, you can add optional logic to your sketch to check for such an occurance and take action (such as forcing the device to reboot) if HomeKit does not re-establish a secure connection to your device after a period of time.
+
+Loss of network connectivity will also trigger state changes.  For example, if WiFi connectivity is lost, HomeSpan will reset its state to **HS_WIFI_CONNECTING** as it tries to re-connect, after which it then follows the remaining processes described above.
 
 |HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
