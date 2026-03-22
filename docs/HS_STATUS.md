@@ -2,7 +2,7 @@
 
 In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating **state** (e.g. connecting to WiFi, updating via OTA, etc.).  This state can be read programmatically from within your sketch (see below for details) but is more often communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
 
-To enable HomeSpan's Status LED functionality, simply call `homeSpan.enableStatusLED()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
+To enable HomeSpan's Status LED functionality, simple call `homeSpan.enableStatusLED()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
 
 The tables below present all possible HomeSpan states, a brief description of each state, and a graphic representation of the associated flashing pattern HomeSpan displays on the Status LED (if implemented) in each state.  Note that graphic representations are all scaled to show the first 6 seconds of each pattern, which should be always sufficient to make the pattern (number of blinks, duration, etc.) obvious.
 
@@ -44,37 +44,6 @@ Notes:
 [^scanning]: Note HomeSpan also sets its state to **HS_WIFI_SCANNING** whenever you start the process to enter your WiFi Credentials, either from the CLI or from within the HomeSpan Setup Access Point.
 
 * If at any point network connectivity is lost, the device is unpaired, or HomeKit terminates all of its secure connections to your device, HomeSpan will reset its state accordingly and the above process picks up from that point.
-
-### Command Mode States
-
-In addition to using the CLI to control various HomeSpan operations, HomeSpan supports a Command Mode that allows users to select various operating commands via an optional Control Button installed on the device.  To enable this functionality, simply call `homeSpan.setControlPin()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of Push Button you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
-
-The table below lists all the HomeSpan states associated with the Command Mode.
-
-To enter the Command Mode, press and hold the Control Button for 3 seconds until the HomeSpan state changes to **HS_ENTERING_COMMAND_MODE**.  Do not to hold the Control Button down for more than 10 seconds unless you want to initiate a full Factory Reset!
-
-Within Device Configuration Mode you can choose one of five possible Actions:
-
-1. *Exit Device Configuration Mode*.  If you have unintentionally entered Device Configuration Mode, select this action to exit and return to the previous state.
-
-1. *Reboot the device*.  If the device is not operating as expecting, a simple reboot often corrects error.
-
-1. *Launch HomeSpan’s temporary WiFi network*.  HomeSpan’s temporary WiFi network provides a simple web interface for you to input your home network’s WiFi credentials and (optionally) create your own HomeKit Setup Code.  See [Setting HomeSpan’s WiFi Credentials and Setup Code](#setting-homespans-wifi-credentials-and-setup-code) for step-by-step instructions.
-
-1. *Unpair the device from Apple HomeKit*.  Under normal operation, you control the pairing and unpairing of all HomeKit devices from the Home App on your iPhone or Mac. However, there are some circumstances in which a device may need to be manually unpaired.  This is typically done by performing a full [Factory Reset](#factory-reset) of the device, but that also deletes your WiFi Credentials.  This action allows you to unpair the device while preserving all other device settings.
-
-1. *Erase stored WiFi Credentials*.  This allows you delete your WiFi Credentials from the device without losing any HomeKit pairing data, after which the device can be set up with new WiFi Credentials.
-
-When the Device Configuration Mode is first started, the Status LED will blink once per second to indicate Action 1 has been selected.  To select the Action 2, briefly press and release the Control Button.  The Status LED will now exhibit a double-blink pattern with a one second pause between blinks, indicating Action 2 has been selected.  Each press of the Control Button selects the next action and causes the Status LED to blink according to the Action number.  Pressing the Control Button once you reach Action 5 brings the selection back to Action 1.
-
-To execute the selected Action press and hold the Control Button for 3 seconds, at which time the Status LED will begin to flash rapidly (10 times a second).  Upon releasing the button HomeSpan will perform the Action selected, and the Status LED will change patterns to reflect the new state of the device after the Action has been taken.
-
-If no Action has been executed within 120 seconds (2 minutes) of starting the Device Configuration Mode, Action 1 is automatically executed and the Device Configuration Mode is exited.
-
-
-
-
-
 
 |HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
