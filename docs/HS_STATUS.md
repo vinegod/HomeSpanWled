@@ -10,7 +10,7 @@ The tables below present all possible HomeSpan states, a brief description of ea
 
 The states below indicate increasing levels of readiness for a fully complete and secure connection between your HomeSpan device and your HomeKit hub(s).
 
-|HomeSpan State|Description|Status LED Pattern|
+|HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
 |HS_SETUP|Setting up|<img src="images/ledPatterns/off.svg" width=300>|
 |||
@@ -47,45 +47,50 @@ Notes:
 
 ### Command Mode States
 
-In addition to using the CLI to control various HomeSpan operations, HomeSpan supports a Command Mode that allows users to select various operating commands via an optional Control Button installed on the device.  To enable this functionality, simply call `homeSpan.setControlPin()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of pushbutton you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
+In addition to using the CLI to control various HomeSpan operations, HomeSpan supports a Command Mode that allows users to select various operating commands via an optional Control Button installed on the device.  To enable this functionality, simply call `homeSpan.setControlPin()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of Push Button you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
 
 The table below lists all the HomeSpan states associated with the Command Mode.
 
-|HomeSpan State|Description|Status LED Pattern|
-|---|---|---|
-|HS_ENTERING_COMMAND_MODE|Entering Command Mode|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
-|||
-|HS_COMMAND_MODE_EXIT_CHOICE|1. Exit Command Mode|<img src="images/ledPatterns/fastBlink1.svg" width=300>|
-|HS_COMMAND_MODE_REBOOT_CHOICE|2. Reboot Device|<img src="images/ledPatterns/fastBlink2.svg" width=300>|
-|HS_CCOMMAND_MODE_LAUNCH_AP_CHOICE|3. Launch Access Point|<img src="images/ledPatterns/fastBlink3.svg" width=300>|
-|HS_COMMAND_MODE_UNPAIR_CHOICE|4. Unpair Device|<img src="images/ledPatterns/fastBlink4.svg" width=300>|
-|HS_COMMAND_MODE_ERASE_WIFI_CHOICE|5. Erase WiFi Credentials|<img src="images/ledPatterns/fastBlink5.svg" width=300>|
-|||
-|HS_COMMAND_MODE_EXIT_SELECTED|Exiting Command Mode...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
-|HS_COMMAND_MODE_REBOOT_SELECTED|Rebooting Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
-|HS_COMMAND_MODE_LAUNCH_AP_SELECTED|Launching Access Point...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
-|HS_COMMAND_MODE_UNPAIR_SELECTED|Unpairing Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
-|HS_COMMAND_MODE_ERASE_WIFI_SELECTED|Erasing WiFi Credentials...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+To enter the Command Mode, press and hold the Control Button for 3 seconds until the HomeSpan state changes to **HS_ENTERING_COMMAND_MODE**.  Do not to hold the Control Button down for more than 10 seconds unless you want to initiate a full Factory Reset!
 
-To enter the Command Mode, press and hold the Control Button for 3 seconds until the HomeSpan state changes to **HS_ENTERING_COMMAND_MODE** and the Status LED pattern changes to rapid flashing.
+Within Device Configuration Mode you can choose one of five possible Actions:
 
-❗ *Do not to hold the Control Button down for more than 10 seconds unless you want to initiate a full Factory Reset!*
+1. *Exit Device Configuration Mode*.  If you have unintentionally entered Device Configuration Mode, select this action to exit and return to the previous state.
 
-Once the Command Mode starts, normal HomeSpan operations are suspended and the state is set **HS_COMMAND_MODE_EXIT_CHOICE**.  Selecting commands using the Control Button within the Command Mode is quite simple.  There are 5 possible command choices, each represented by one of the "CHOICE" states above, and each with a distinct repeated blinking pattern of between 1 and 5 flashes.  To *cycle* through the 5 different HomeSpan states from one choice to the next, press and release the Control Button (pressing and releasing the Control Button when in the Choice 5 state brings you back to the Choice 1 state).
-
-To select the command indicated by the current state, press and hold the Control Button for 3 seconds until the HomeSpan state changes to the corresponding "SELECTED" state and the Status LED pattern changes to rapid flashing.  Upon releasing the Control Button HomeSpan will perform the Command selected, and the state will be updated accordingly.  Below is a more detailed description of each Command choice:
-
-1. *Exit Command Mode*.  Exits the Command Mode and resumes normal HomeSpan operations corresponding to the state HomeSpan was in prior to entering the Command Mode.
- 
 1. *Reboot the device*.  If the device is not operating as expecting, a simple reboot often corrects error.
 
-1. *Launch the HomeSpan Setup Access Point*.  HomeSpan’s Setup Sccess Point provides a simple web interface for you to input your home network’s WiFi credentials and (optionally) create your own HomeKit Setup Code.  See [Setting HomeSpan’s WiFi Credentials and Setup Code](#setting-homespans-wifi-credentials-and-setup-code) for step-by-step instructions.
+1. *Launch HomeSpan’s temporary WiFi network*.  HomeSpan’s temporary WiFi network provides a simple web interface for you to input your home network’s WiFi credentials and (optionally) create your own HomeKit Setup Code.  See [Setting HomeSpan’s WiFi Credentials and Setup Code](#setting-homespans-wifi-credentials-and-setup-code) for step-by-step instructions.
 
-1. *Unpair the device from Apple HomeKit*.  Under normal operation, you control the pairing and unpairing of all HomeKit devices from the Home App on your iPhone or Mac. However, there are some circumstances in which a device may need to be manually unpaired.  This can be done by performing a full [Factory Reset](#factory-reset) of the device, but that also deletes your WiFi Credentials.  This action allows you to unpair the device while preserving all other device settings.
+1. *Unpair the device from Apple HomeKit*.  Under normal operation, you control the pairing and unpairing of all HomeKit devices from the Home App on your iPhone or Mac. However, there are some circumstances in which a device may need to be manually unpaired.  This is typically done by performing a full [Factory Reset](#factory-reset) of the device, but that also deletes your WiFi Credentials.  This action allows you to unpair the device while preserving all other device settings.
 
 1. *Erase stored WiFi Credentials*.  This allows you delete your WiFi Credentials from the device without losing any HomeKit pairing data, after which the device can be set up with new WiFi Credentials.
 
-Note: if no Command choice has been selected within 120 seconds (2 minutes) of starting the Command Mode, Choice 1 is automatically executed causing the Command Mode to exit.
+When the Device Configuration Mode is first started, the Status LED will blink once per second to indicate Action 1 has been selected.  To select the Action 2, briefly press and release the Control Button.  The Status LED will now exhibit a double-blink pattern with a one second pause between blinks, indicating Action 2 has been selected.  Each press of the Control Button selects the next action and causes the Status LED to blink according to the Action number.  Pressing the Control Button once you reach Action 5 brings the selection back to Action 1.
+
+To execute the selected Action press and hold the Control Button for 3 seconds, at which time the Status LED will begin to flash rapidly (10 times a second).  Upon releasing the button HomeSpan will perform the Action selected, and the Status LED will change patterns to reflect the new state of the device after the Action has been taken.
+
+If no Action has been executed within 120 seconds (2 minutes) of starting the Device Configuration Mode, Action 1 is automatically executed and the Device Configuration Mode is exited.
+
+
+
+
+
+
+|HomeSpan Status|Description|Status LED Pattern|
+|---|---|---|
+|HS_ENTERING_CONFIG_MODE|Entering Command Mode|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|||
+|HS_CONFIG_MODE_EXIT|1. Exit Command Mode|<img src="images/ledPatterns/fastBlink1.svg" width=300>|
+|HS_CONFIG_MODE_REBOOT|2. Reboot Device|<img src="images/ledPatterns/fastBlink2.svg" width=300>|
+|HS_CONFIG_MODE_LAUNCH_AP|3. Launch Access Point|<img src="images/ledPatterns/fastBlink3.svg" width=300>|
+|HS_CONFIG_MODE_UNPAIR|4. Unpair Device|<img src="images/ledPatterns/fastBlink4.svg" width=300>|
+|HS_CONFIG_MODE_ERASE_WIFI|5. Erase WiFi Credentials|<img src="images/ledPatterns/fastBlink5.svg" width=300>|
+|||
+|HS_CONFIG_MODE_EXIT_SELECTED|Exiting Command Mode...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_REBOOT_SELECTED|Rebooting Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_LAUNCH_AP_SELECTED|Launching Access Point...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_UNPAIR_SELECTED|Unpairing Device...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
+|HS_CONFIG_MODE_ERASE_WIFI_SELECTED|Erasing WiFi Credentials...|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
 
 |HomeSpan Status|Description|Status LED Pattern|
 |---|---|---|
