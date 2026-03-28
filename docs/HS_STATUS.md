@@ -1,16 +1,32 @@
 # HomeSpan Status and the HomeSpan Status LED
 
-In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating **status** (e.g. connecting to WiFi, updating via OTA, etc.).  The current HomeSpan status, represented as an enum type *HS_STATUS*, can be read directly from within your sketch as well as communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
+In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating status (e.g. connecting to WiFi, updating via OTA, etc.).  The current HomeSpan status, represented as an *enum* of type **HS_STATUS**, can be read directly from within your sketch as well as communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
 
-To read the status from within your sketch, call `homeSpan.getStatus()`.  This function returns a `std::pair<HS_STATUS, uint32_t>` where the first element indicates the current status and the second element indicates the number of seconds that have elapsed since HomeSpan first switched to the current status.  The elapsed time can be manually reset to zero by calling `homeSpan.resetStatusTime()`.  
+To read the status from within your sketch, call `homeSpan.getStatus()`.  This function returns a `std::pair<HS_STATUS, uint32_t>` where the first element indicates the current status and the second element indicates duration (in seconds) that HomeSpan has been in its current state.  This duration resets to zero whenever the HomeSpan status changes, and can also be reset manually by calling `homeSpan.resetStatusDuration()`.
 
+For example, a adding the following code to the main `loop()` in your sketch will monitor HomeSpan status and output a warning every 30 seconds if the device has not yet been paired:
 
+```C++
+void loop(){
+
+  homeSpan.poll();
+
+  auto [ status, duration] = homeSpan.getStatus();      // using "auto" is an easy way to read the data from a function that returns a std::pair
+  if(status==HS_PAIRING_NEEDED && duration > 30){
+    Serial.printf("Warning: HomeSpan is not paired.\n");
+    homeSpan.resetStatusDuration();
+  }  
+}
+```
+Additionally, the optional ***homeSpan*** method, `void setStatusCallback(void (*func)(HS_STATUS status))`, can be used to create a callback function, *func*, that HomeSpan calls whenever its status changes.  HomeSpan passes *func* a single argument, *status*, of type *HS_STATUS*, defined as follows:
 To enable HomeSpan's Status LED functionality, simply call `homeSpan.enableStatusLED()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
+
 
 The tables below present all possible HomeSpan states, a brief description of each state, and a graphic representation of the associated flashing pattern HomeSpan displays on the Status LED (if implemented) in each state.  Note that graphic representations are all scaled to show the first 6 seconds of each pattern, which should be always sufficient to make the pattern (number of blinks, duration, etc.) obvious.
 
 |HomeSpan Status (HS_STATUS)|Status String|Status LED Pattern|
 |---|---|---|
+|<details><summary>HS_INITIAL_SETUP</summary><i>HomeSpan is running code in the setup() portion of the sketch</details>|WiFi Credentials Needed|<img src="images/ledPatterns/off.svg" width=300>|
 |<details><summary>HS_WIFI_NEEDED</summary><i>WiFi Credentials have not yet been set/stored, and an Ethernet interface is not available</details>|WiFi Credentials Needed|<img src="images/ledPatterns/slowSingleBlink.svg" width=300>|
 |<details><summary>HS_WIFI_SCANNING</summary><i>HomeSpan is in the process of scanning (or re-scanning) for WiFi network Access Points</details>|WiFi Scanning Started|<img src="images/ledPatterns/longTripleBlink.svg" width=300>|
 |<details><summary>HS_WIFI_CONNECTING</summary><i>HomeSpan is trying to connect to the WiFi network specified in the stored WiFi Credentials</details>|WiFi Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
