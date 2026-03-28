@@ -45,5 +45,16 @@ void setup() {
     new Service::LightBulb();
       new Characteristic::On();
 
-  homeSpan.autoPoll();
+  // homeSpan.autoPoll();
+}
+
+void loop(){
+
+ homeSpan.poll();
+
+  auto [ status, duration] = homeSpan.getStatus();
+  if(status==HS_PAIRING_NEEDED && duration > 30){
+    Serial.printf("Warning: HomeSpan is not paired.\n");
+    homeSpan.resetStatusDuration();
+  }  
 }

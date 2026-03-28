@@ -442,6 +442,7 @@ class Span{
   Span& setWifiCredentials(const char *ssid, const char *pwd);                           // sets WiFi Credentials
   Span& setConnectionTimes(uint32_t minTime, uint32_t maxTime, uint8_t nSteps);          // sets min/max WiFi connection times (in seconds) and number of steps
   std::pair<HS_STATUS,uint32_t> getStatus();                                             // returns current HomeSpan status and duration
+  void resetStatusDuration();                                                            // resets HomeSpan status duration to zero
   Span& setStatusCallback(void (*f)(HS_STATUS status)){statusCallback=f;return(*this);}  // sets an optional user-defined function to call when HomeSpan status changes
   const char* statusString(HS_STATUS s);                                                 // returns char string for HomeSpan status change messages
   Span& setPairingCode(const char *s, boolean progCall=true);                            // sets the Pairing Code - use is NOT recommended.  Use 'S' from CLI instead

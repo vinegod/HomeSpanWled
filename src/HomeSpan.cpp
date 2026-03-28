@@ -1406,15 +1406,23 @@ void Span::getWebLog(void (*f)(const char *, void *), void *user_data){
 
 std::pair<HS_STATUS,uint32_t> Span::getStatus(){
 
-  std::shared_lock readLock(hsStatusMux);            // wait for mux to be unlocked, or already locked non-exclusively, and then lock *non-exclusively* to prevent writing in vLog
+  std::shared_lock readLock(hsStatusMux);           // wait for mux to be unlocked, or already locked non-exclusively, and then lock *non-exclusively* to prevent another process from writing
   return{hsStatus, millis()/1000-hsStatusTime};
+}
+
+///////////////////////////////
+
+void Span::resetStatusDuration(){
+
+  std::unique_lock writeLock(hsStatusMux);        // wait for mux to be unlocked and then lock *exclusively* so write can proceed uninterrupted
+  hsStatusTime=esp_timer_get_time()/1e6;          // reset status time to current time
 }
 
 ///////////////////////////////
 
 void Span::setStatus(HS_STATUS hst){
 
-  std::unique_lock writeLock(hsStatusMux);  // wait for mux to be unlocked and then lock *exclusively* so write can proceed uninterrupted
+  std::unique_lock writeLock(hsStatusMux);          // wait for mux to be unlocked and then lock *exclusively* so write can proceed uninterrupted
 
   switch(hst){
     case HS_WIFI_NEEDED: statusLED->start(300,0.5,1,2700); break;                 // slow single-blink
