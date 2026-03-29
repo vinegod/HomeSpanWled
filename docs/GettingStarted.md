@@ -54,7 +54,7 @@ The Control Button should be installed between ground and any pin on the ESP32 t
 
 Similarly, the Status LED can be connected to any pin on the ESP32 that can serve as an output (and grounded through an appropriately-sized current-limiting resistor).  To inform HomeSpan of which pin you chose, you must call the method `homeSpan.setStatusPin(pin)` near the top of your sketch, else HomeSpan will assume a Status LED has **not** been installed.  Note some ESP32 boards have a built-in LED --- it is fine to use this for the Status LED if it is a simple on/off LED.  If your built-in LED is an RGB NeoPixel, or if you would like to use an external RGB NeoPixel for your Status LED, call the method `homeSpan.setStatusPixel(pin)` instead, in which case HomeSpan will use its NeoPixel driver to operate the status LED.
 
-Using the Control Button and Status LED to configure a standalone HomeSpan device, including starting HomeSpan's temporary WiFi network to configure the device's WiFi Credentials and HomeKit Setup Code, is fully explained in the [HomeSpan User Guide](UserGuide.md).
+Using the Control Button and Status LED to configure a standalone HomeSpan device, including starting HomeSpan's Setup Access Point to configure the device's WiFi Credentials and HomeKit Setup Code, is fully explained in the [HomeSpan User Guide](UserGuide.md).
 
 ## What Next?
 
