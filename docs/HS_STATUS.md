@@ -2,11 +2,11 @@
 
 In addition to keeping track of all the HomeKit Accessories, Services, and Characteristics you've implemented in a HomeSpan sketch, HomeSpan also keeps track of its global operating status (e.g. connecting to WiFi, updating via OTA, etc.).  The current HomeSpan status, represented as an *enum* of type **HS_STATUS**, can be read directly from within your sketch as well as communicated visually via different blinking patterns of an *optional* Status LED you can implement on your device.  This LED can be a simple analog single-color LED or an addressable Pixel LED. Many manufacturers include one or both of these on their ESP32 boards, though you can use a separate LED if desired.
 
-To enable HomeSpan's Status LED functionality, simply call  `homeSpan.enableStatusLED()` near the top of your HomeSpan sketch.  This function takes different types of parameters depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for this function.
+To enable HomeSpan's Status LED functionality, simply call `homeSpan.setStatusPin()` or any related functions near the top of your HomeSpan sketch depending on the specific type of LED you are using.  Please see the [Reference API](Reference.md) for details on the various options available for enabling different types of Status LEDs.
 
 To instead read the status from within your sketch, call `homeSpan.getStatus()`.  This function returns a *pair* of values in the form `std::pair<HS_STATUS, uint32_t>`, where the first element indicates HomeSpan's current *status* and the second element indicates the *duration* (in seconds) since HomeSpan entered into that state.  This duration resets to zero whenever the HomeSpan status changes, and can also be reset manually by calling `homeSpan.resetStatusDuration()`.
 
-For example, adding the following code to the main `loop()` in your sketch will monitor HomeSpan status and output a warning every 30 seconds if the device has not yet been paired:
+For example, adding the following code to the main `loop()` in your sketch will monitor HomeSpan's status and output a warning every 30 seconds if the device has not yet been paired:
 
 ```C++
 void loop(){
@@ -21,9 +21,11 @@ void loop(){
 }
 ```
 
-In addition to reading the HomeSpan status directly, the method `homeSpan.setStatusCallback(void (*func)(HS_STATUS status))` can be used to create an optional callback function, *func*, that HomeSpan calls whenever its status changes.  HomeSpan passes *func* a single argument, *status*, of type **HS_STATUS**, that you can read from within your callback.  For ease of use, HomeSpan also provides the convenience function `const char* homeSpan.statusString(HS_STATUS s)` that returns a pre-defined character string for each **HS_STATUS**.
+In addition to reading the HomeSpan status directly, the method `homeSpan.setStatusCallback(void (*func)(HS_STATUS status))` can be used to create an optional callback function, *func*, that HomeSpan calls whenever it changes its status.[^setup]  HomeSpan passes *func* a single argument, *status*, of type **HS_STATUS**, that you can read from within your callback.  For ease of use, HomeSpan also provides the convenience function `const char* homeSpan.statusString(HS_STATUS s)` that returns a pre-defined character string for each **HS_STATUS** type.
 
-For example, the code below create an optional callback function printing the current HomeSpan status whenever it changes:
+[^setup]: Note HomeSpan boots with its status initialized to *HS_INITIAL_SETUP*, which itself does *not* trigger the callback.  The callback won't be triggered until  HomeSpan first changes its initial status from *HS_INITIAL_SETUP* to something else, and then upon all other subsequent changes.
+
+For example, the code below creates an optional callback function printing the current HomeSpan status whenever it changes:
 
 
 ```C++
@@ -43,7 +45,7 @@ void statusUpdate(HS_STATUS status){
 }
 ```
 
-You can of course create any alternative messsages, or take any actions desired, in *func* and do not need to use HomeSpan's pre-defined character strings.  Note that HomeSpan callbacks can also take anonymous *lambda functions* as an argument.  For example, this single line of code will create a callback to outputs messages, formatted in red, to the Web Log whenever the HomeSpan status changes:
+You can of course create any alternative messsages, or take any actions desired, in *func* and do not need to use HomeSpan's pre-defined character strings.  Note that HomeSpan callbacks can also take anonymous *lambda functions* as an argument.  For example, this single line of code will create a callback that outputs log messages, formatted in red, to the Web Log whenever the HomeSpan status changes:
 
 ```C++
 void setup(){
@@ -53,11 +55,13 @@ void setup(){
 }
 ```
 
-The table below lists all possible HomeSpan **HS_STATUS** types, the pre-defined character string returned by `statusString()` for each status, and a graphic representation of the associated flashing pattern HomeSpan displays on the Status LED (if implemented) for each status.  Clicking on any given entry provides a more detailed description of each state.  Note that graphic representations are all scaled to show the first 6 seconds of each pattern, which should be always sufficient to make the pattern (number of blinks, duration, etc.) obvious.
+### Table of HomeSpan Status Types
+
+The table below lists all possible HomeSpan **HS_STATUS** types along with each type's pre-defined character string (as returned by `statusString()`) and a graphic representation of the flashing pattern HomeSpan would display for that status type on the optional HomeSpan Status LED, if enabled.  Click on any entry for more details.  Note that graphic representations are all scaled to show the first 6 seconds of each pattern, which should be always sufficient to make the pattern (number of blinks, duration, etc.) obvious.
 
 |HomeSpan Status (HS_STATUS)|Status String|Status LED Pattern|
 |---|---|---|
-|<details><summary>HS_INITIAL_SETUP</summary><i>HomeSpan is running code in the setup() portion of the sketch</details>|WiFi Credentials Needed|<img src="images/ledPatterns/off.svg" width=300>|
+|<details><summary>HS_INITIAL_SETUP</summary><i>HomeSpan is running code in the setup() portion of the sketch</details>|HomeSpan Initializing|<img src="images/ledPatterns/off.svg" width=300>|
 |<details><summary>HS_WIFI_NEEDED</summary><i>WiFi Credentials have not yet been set/stored, and an Ethernet interface is not available</details>|WiFi Credentials Needed|<img src="images/ledPatterns/slowSingleBlink.svg" width=300>|
 |<details><summary>HS_WIFI_SCANNING</summary><i>HomeSpan is in the process of scanning (or re-scanning) for WiFi network Access Points</details>|WiFi Scanning Started|<img src="images/ledPatterns/longTripleBlink.svg" width=300>|
 |<details><summary>HS_WIFI_CONNECTING</summary><i>HomeSpan is trying to connect to the WiFi network specified in the stored WiFi Credentials</details>|WiFi Connecting|<img src="images/ledPatterns/slowFlashing.svg" width=300>|
@@ -83,11 +87,22 @@ The table below lists all possible HomeSpan **HS_STATUS** types, the pre-defined
 |<details><summary>HS_AP_TERMINATED</summary><i>The HomeSpan Setup Access Point has been terminated</details>|Access Point Terminated|<img src="images/ledPatterns/rapidFlashing.svg" width=300>|
 |<details><summary>HS_OTA_STARTED</summary><i>HomeSpan is in the process of receiving an Over-the-Air software update</details>|OTA Update Started|<img src="images/ledPatterns/mediumTripleBlink.svg" width=300>|
 
-### Advanced Use Cases:
+### Advanced Use Cases
 
-* If you have attached a text display to your HomeSpan device, add code to the callback function decribed above to have it display HomeSpan status messages to the user
-* Instead of enabling the HomeSpan Status LED, implement your own custom LED patterns, use different colors, etc., by adding custom logic to the callback function
-* Monitor HomeSpan's status to make sure it always has a connection to HomeKit when it should, and take action if it does not.  For example:
+* If you have attached a text display to your HomeSpan device, add code to the callback function decribed above to have it display HomeSpan status messages to the user.
+* Instead of enabling the HomeSpan Status LED, implement your own custom LED patterns, use different colors, etc., by adding custom logic to the callback function.
+
+### Rebooting to Address "No Response" Issues in Home App
+
+After a HomeSpan device establishes WiFi or Ethernet connectivity to your network, its status will change to either *HS_PAIRING_NEEDED*, or *HS_PAIRED*, depending on whether or not it has been paired with HomeKit.  If the status is *HS_PAIRING_NEEDED*, it will remain so until you pair the device with HomeKit using the Home App on your iPhone.
+
+If instead pairing has already been completed, one or more of your HomeKit Hubs should automatically detect the HomeSpan device and initiate a secure connection request.  This may occur within a few seconds of the device first connecting to your network, or it may take a minute or two.  Upon successfully validating the first request HomeSpan receives for a secure connection from HomeKit, HomeSpan changes its status to *HS_CONNECTED*.  While in that state, you should be able to fully control your device from the Home App.
+
+If for whatever reason HomeKit closes all its secure connections with the device, but the device remains connected to your network and paired with HomeKit, HomeSpan will reset its status to *HS_PAIRED*. It then waits for HomeKit to request a new secure connection.
+
+As such, HomeSpan should maintain a status of *HS_PAIRED* only temporarily.  Remaining in the *HS_PAIRED* state for an extended period of time is undesireable and will likely cause the Home App to indicate "No Reponse" for your device.  HomeSpan cannot cure this issue by itself, since HomeKit does not allow devices to initiate outbound connections to a HomeKit Hub.  Rather, HomeKit must initiate all new connections to each device it finds on a home network.
+
+The code below provides a potential solution to this problem by monitoring HomeSpan's status and checking if it has been in the *HS_PAIRED* status for an extended period of time. If so, it assumes something is wrong and reboots itself, with the hope that upon re-starting and re-connecting to your network, HomeKit will re-establish secure connectivity with the device:
 
 ```C++
 void loop(){
