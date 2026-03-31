@@ -58,6 +58,8 @@
 
 #define     DEFAULT_REBOOT_CALLBACK_TIME  5000            // default time (in milliseconds) to check for reboot callback
 
+#define     DEFAULT_CB_COMMAND_TIME       3000            // default time (in milliseconds) for Control Button to trigger Command Mode enter/exit
+#define     DEFAULT_CB_RESET_TIME         10000           // default time (in milliseconds) for Control Button to trigger Factory Reset
 
 /////////////////////////////////////////////////////
 //              OTA PARTITION INFO                 //

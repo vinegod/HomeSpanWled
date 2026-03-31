@@ -320,6 +320,8 @@ class Span{
   uint16_t autoOffLED=0;                                      // automatic turn-off duration (in seconds) for Status LED
   int logLevel=DEFAULT_LOG_LEVEL;                             // level for writing out log messages to serial monitor
   unsigned long comModeLife=DEFAULT_COMMAND_TIMEOUT*1000;     // length of time (in milliseconds) to keep Command Mode alive before resuming normal operations
+  unsigned long cbComTime=DEFAULT_CB_COMMAND_TIME;            // time (in milliseconds) for Control Button to trigger Command Mode enter/exit
+  unsigned long cbResTime=DEFAULT_CB_RESET_TIME;              // time (in milliseconds) for Control Button to trigger Factory Reset
   uint16_t tcpPortNum=DEFAULT_TCP_PORT;                       // port for TCP communications between HomeKit and HomeSpan
   char qrID[5]="";                                            // Setup ID used for pairing with QR Code
   void (*wifiCallback)()=NULL;                                // optional callback function to invoke once WiFi connectivity is initially established *** TO BE DEPRECATED ***
@@ -410,7 +412,15 @@ class Span{
     controlButton=new PushButton(pin, triggerType);
     return(*this);
     }
-    
+
+  Span& setControlTimes(uint32_t comTime, uint32_t resTime){                             // sets Control Pin times (in millis) for entering/exiting Command Mode and for Factory Reset
+    if(resTime>comTime){
+      cbComTime=comTime;
+      cbResTime=resTime;
+    }
+    return(*this);
+  }
+
   int getControlPin(){return(controlButton?controlButton->getPin():-1);}                 // get Control Pin (returns -1 if undefined)
 
   Span& setStatusPin(uint8_t pin){statusDevice=new GenericLED(pin);return(*this);}       // sets Status Device to a simple LED on specified pin

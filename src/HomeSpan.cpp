@@ -303,7 +303,7 @@ void Span::pollTask() {
   if(controlButton && controlButton->primed())
     setStatus(HS_ENTERING_CONFIG_MODE);
   
-  if(controlButton && controlButton->triggered(3000,10000)){
+  if(controlButton && controlButton->triggered(cbComTime,cbResTime)){
     if(controlButton->type()==PushButton::LONG){
       setStatus(HS_FACTORY_RESET);
       controlButton->wait();
@@ -353,7 +353,7 @@ void Span::commandMode(){
       mode=1;
       done=true;
     } else
-    if(controlButton->triggered(10,3000)){
+    if(controlButton->triggered(10,cbComTime)){
       if(controlButton->type()==PushButton::SINGLE){
         mode++;
         if(mode==6)
