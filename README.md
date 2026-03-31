@@ -108,6 +108,8 @@ HomeSpan provides a microcontroller-focused implementation of Apple's HomeKit Ac
 
 * **Added new `boolean homeSpan.usingEthernet()` method**
   * returns true if Ethernet interface is being used, else false if WiFi is being used
+* **Added new `homeSpan.setControlTimes(uint32_t comTime, uint32_t resTime)` method**
+  * allows users to customize the hold times required for the Control Button to trigger either the Command Mode or a Factory Reset
 * **Redirected `setVal()` out-of-range warnings to WEBLOG instead of LOG0 so these warnings will be displayed in both the Serial Monitor and the Web Log**
             
 See [Releases](https://github.com/HomeSpan/HomeSpan/releases) for details on all changes and bug fixes included in this update.
