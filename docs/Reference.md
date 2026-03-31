@@ -27,7 +27,7 @@ At runtime HomeSpan will create a global **object** named `homeSpan` (of type *c
 ---
 
 The following **optional** `homeSpan` methods override various HomeSpan initialization parameters used in `begin()`, and therefore **should** be called before `begin()` to take effect.
-Methods with a return type of `Span&` return a reference to `homeSpan` itself and can thus be chained together (e.g. `homeSpan.setControlPin(21).setStatusPin(13);`).  If a method is *not* called, HomeSpan uses the default parameter indicated below:
+Methods with a return type of `Span&` return a reference to `homeSpan` itself and can thus be chained together (e.g. `homeSpan.setControlPin(21).setStatusPin(13);`).  If a method is *not* called, HomeSpan uses the default parameters indicated below:
 
 * `Span& setControlPin(uint8_t pin, triggerType=PushButton::TRIGGER_ON_LOW)`
   * sets the ESP32 *pin* to use for the HomeSpan Control Button
@@ -41,6 +41,13 @@ Methods with a return type of `Span&` return a reference to `homeSpan` itself an
       * not available on ESP32-C3
   * as an alternative, you can set *triggerType* to any user-defined function of the form `boolean(int arg)` to utilize any device as a Control Button.  See **SpanButton** below for details
 
+* `Span& setControlTimes(uint32_t comTime, uint32_t resTime)`
+  * allows users to override HomeSpan's default hold times for the Control Button as follows:
+    * *comTime* - the hold time (in milliseconds) required to trigger HomeSpan to enter or exit the Device Command Mode
+    * *resTime* - the hold time (in milliseconds) required to trigger a Factory Reset
+  * HomeSpan's defaults require holding the Control Button for 3000ms to enter/exit the Device Command Mode and for 10000ms to trigger a Factory Reset
+  * if the *resTime* specified is not greater than the *comTime*, HomeSpan ignores the request
+ 
 * `int getControlPin()`
    * returns the pin number of the HomeSpan Control Button as set by `setControlPin(pin)`, or -1 if no pin has been set
   
