@@ -400,19 +400,19 @@ The following **optional** `homeSpan` methods provide additional run-time functi
   * note: calling this function only affects the IID generation for the current Accessory (the count will be reset to IID=1 upon instantiation of a new Accessory)
 
 * `const char *getPairingInfo(char **buf)`
-  * allocates memory to *buf*, a user-provided empty **pointer** to a `char *`, and fills it with the base64-encoded pairing data of the HomeSpan device in the same format as provided by the 'P' CLI Command
+  * allocates memory to *buf*, a user-provided empty **pointer** to a `char *`, and fills it with HomeSpan's Accessory Device Pairing Data in the same base-64 format as provided by the 'P' CLI Command
     * a pointer to *buf* itself is returned
     * when *buf* is no longer needed, the user must call `free(buf)` to de-allocate the memory 
   * see [Cloning Pairing Data](Cloning.md) for details
     
 * `const_iterator controllerListBegin()` and `const_iterator controllerListEnd()`
-  * returns a *constant iterator* pointing to either the *beginning*, or the *end*, of an opaque linked list that stores all controller data
+  * returns a *constant iterator* pointing to either the *beginning*, or the *end*, of an opaque linked list that stores all Controller Pairing Data
   * iterators should be defined using the `auto` keyword as follows: `auto myIt=homeSpan.controllerListBegin();`
-  * controller data can be read from a de-referenced iterator using the following methods:    
-    * `const uint8_t *getID()` returns pointer to the 36-byte ID of the controller
-    * `const uint8_t *getLTPK()` returns pointer to the 32-byte Long Term Public Key of the controller
-    * `boolean isAdmin()` returns true if controller has admin permissions, else returns false
-    * `const char *getPairingInfo(char **buf)` allocates memory to *buf*, a user-provided empty **pointer** to a `char *`, and fills it with the base64-encoded pairing data of the controller in the same format as provided by the 'P' CLI Command
+  * Controller data can be read from a de-referenced iterator using the following methods:    
+    * `const uint8_t *getID()` returns pointer to the 36-byte ID of the Controller
+    * `const uint8_t *getLTPK()` returns pointer to the 32-byte Long Term Public Key of the Controller
+    * `boolean isAdmin()` returns true if Controller has admin permissions, else returns false
+    * `const char *getPairingInfo(char **buf)` allocates memory to *buf*, a user-provided empty **pointer** to a `char *`, and fills it with the Controller's Pairing Data in the same base64 format as provided by the 'P' CLI Command
       * a pointer to *buf* itself is returned
       * when *buf* is no longer needed, the user must call `free(buf)` to de-allocate the memory 
   * see [Cloning Pairing Data](Cloning.md) for details
