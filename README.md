@@ -104,7 +104,18 @@ HomeSpan provides a microcontroller-focused implementation of Apple's HomeKit Ac
     * *infoTable* - the top table that provides general information about the device (can use *tab1* for backwards compatibility)
     * *clientTable* - the newly-added table listing all active client connections (can use *tab2* for backwards compatibility)
     *  *logTable* - the bottom table listed all the individual Web Log entries (can also use *tab2* for backwards compatibility)
-  * See [Message Logging](docs/Logging.md) for details 
+  * See [Message Logging](docs/Logging.md) for details
+ 
+* **Created ability to programmatically retrieve base-64 encoded Pairing Data from within a sketch**
+  * Added the following two new methods:
+    * `const char* homeSpan.getPairingInfo(char **buf)`
+      * allocates memory to *buf* and fills with HomeSpan's Device Pairing Data
+      * returns *buf*, which must be de-allocated with `free(buf)` when no longer needed
+    * `const char* Controller::getPairingInfo(char **buf)`
+      *  allocates memory to *buf* and fills with a Controller's Pairing Data
+      * returns *buf*, which must be de-allocated with `free(buf)` when no longer needed
+  * Using these methods duplicates the exact Accessory and Controller Pairing Data provided by the 'P' CLI Command needed to clone devices
+  * See the [API Reference](docs/Reference.md) for details on these methods and the [Cloning Pairing Data](docs/Cloning.md) page for a full example 
 
 * **Added new `boolean homeSpan.usingEthernet()` method**
   * returns true if Ethernet interface is being used, else false if WiFi is being used
