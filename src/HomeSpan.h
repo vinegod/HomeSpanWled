@@ -154,6 +154,13 @@ class Controller {
   const uint8_t *getID() const {return(ID);}
   const uint8_t *getLTPK() const {return(LTPK);}
   boolean isAdmin() const {return(admin);}
+  const char *getPairingInfo(char **buf) const{
+    size_t olen;
+    TempBuffer<char> tBuf(256);
+    mbedtls_base64_encode((uint8_t *)tBuf.get(),256,&olen,(uint8_t *)this,sizeof(struct Controller));
+    asprintf(buf,tBuf.get());
+    return(*buf);
+  }
 
 };
 
@@ -520,6 +527,7 @@ class Span{
 
   Span& addBssidName(String bssid, string name){bssid.toUpperCase();bssidNames[bssid.c_str()]=name;return(*this);}
 
+  const char *getPairingInfo(char **buf);
   list<Controller, Mallocator<Controller>>::const_iterator controllerListBegin();
   list<Controller, Mallocator<Controller>>::const_iterator controllerListEnd();
 

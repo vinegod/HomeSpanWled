@@ -1254,13 +1254,12 @@ void Span::processSerialCommand(const char *c){
     case 'P': {
       
       LOG0("\n*** Pairing Data used for Cloning another Device\n\n");
-      size_t olen;
-      TempBuffer<char> tBuf(256);
-      mbedtls_base64_encode((uint8_t *)tBuf.get(),256,&olen,(uint8_t *)&HAPClient::accessory,sizeof(struct Accessory));
-      LOG0("Accessory data:  %s\n",tBuf.get());
-      for(const auto &cont : HAPClient::controllerList){
-        mbedtls_base64_encode((uint8_t *)tBuf.get(),256,&olen,(uint8_t *)(&cont),sizeof(struct Controller));
-        LOG0("Controller data: %s\n",tBuf.get());        
+      char *buf;
+      LOG0("Accessory data:  %s\n",homeSpan.getPairingInfo(&buf));
+      free(buf);
+      for(auto it=homeSpan.controllerListBegin(); it!=homeSpan.controllerListEnd(); ++it){
+        LOG0("Controller data: %s\n",it->getPairingInfo(&buf));
+        free(buf);
       }
       LOG0("\n*** End Pairing Data\n\n");
     }
@@ -2005,6 +2004,16 @@ boolean Span::updateDatabase(boolean updateMDNS){
   }    
 
   return(changed);
+}
+
+///////////////////////////////
+
+const char *Span::getPairingInfo(char **buf){
+  size_t olen;
+  TempBuffer<char> tBuf(256);
+  mbedtls_base64_encode((uint8_t *)tBuf.get(),256,&olen,(uint8_t *)&HAPClient::accessory,sizeof(struct Accessory));
+  asprintf(buf,tBuf.get());
+  return(*buf);
 }
 
 ///////////////////////////////
