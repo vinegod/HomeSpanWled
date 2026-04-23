@@ -2472,7 +2472,7 @@ void SpanCharacteristic::printfAttributes(int flags){
   if(flags&GET_META){
     hapOut << ",\"format\":\"" << formatCodes[format] << "\"";
     
-    if((customRange || isCustom) && (flags&GET_META)){
+    if(customRange && (flags&GET_META)){
       hapOut << ",\"minValue\":" << uvPrint(minValue).c_str() << ",\"maxValue\":" << uvPrint(maxValue).c_str();
         
       if(uvGet<float>(stepValue)>0)
