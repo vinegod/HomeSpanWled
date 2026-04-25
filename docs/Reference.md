@@ -587,14 +587,11 @@ This is a **base class** from which all HomeSpan Characteristics are derived, an
   * throws a runtime warning if called from within the `update()` routine of a **SpanService** *and* `isUpdated()` is *true* for the Characteristic (i.e. it is being updated at the same time via the Home App), *unless* you are changing the value of a Characteristic in response to a *write-response* request from HomeKit (typically used only for certain TLV-based Characteristics)
   * note this method can be used to update the value of a Characteristic even if the Characteristic is not permissioned for event notifications (EV), in which case the value stored by HomeSpan will be updated but the Home App will *not* be notified of the change
 
-
 * `SpanCharacteristic *setRange(min, max, step)`
   * overrides the default HAP range for a Characteristic with the *min*, *max*, and *step* parameters specified
-  * *step* is optional; if unspecified (or set to a non-positive number), the default HAP step size remains unchanged
+  * *step* is optional; if unspecified (or set to a non-positive number), the step size remains unchanged
   * works with any integer or floating-based parameters, though HomeSpan will recast the parameters into the appropriate type for each Characteristic (e.g. calling `setRange(50.5,70.3,0.5)` on an integer-based Characteristic results in *min*=50, *max*=70, and *step*=0)
-  * an error is thrown if:
-    * called on a Characteristic that does not suport range changes, or
-    * called more than once on the same Characteristic
+  * an error is thrown if called on a Characteristic that does not suport range changes
   * returns a pointer to the Characteristic itself so that the method can be chained during instantiation
   * example: `(new Characteristic::Brightness(50))->setRange(10,100,5);`
   
