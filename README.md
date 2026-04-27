@@ -11,7 +11,7 @@ HomeSpan provides a microcontroller-focused implementation of Apple's HomeKit Ac
 |Current HomeSpan Production Release | **2.1.8** | - |
 | Supported Chips | **ESP32, S2, S3, C3, C5, and C6** | [^8266] |
 | Minimum Required [Arduino-ESP32 Core](https://github.com/espressif/arduino-esp32) | **3.3.0** | [^fail] |
-| Latest Core fully tested with HomeSpan | **3.3.7** | [^tested] |
+| Latest Core fully tested with HomeSpan | **3.3.8** | [^tested] |
 | Minimum Flash Partition Size | **1.9MB** | - |
 | Recommended Partition Scheme | **Minimal SPIFFS (1.9MB APP with OTA)** | [^partition] |
 | HomeKit Hub | **HomePod or Apple TV** | [^homehub] |
@@ -71,7 +71,7 @@ HomeSpan provides a microcontroller-focused implementation of Apple's HomeKit Ac
   * Launch the WiFi Access Point
 * A standalone, detailed End-User Guide
 
-## ❗Latest Update - HomeSpan 2.1.8 (XX YYY 2026)
+## ❗Latest Update - HomeSpan 2.1.8 (26 APR 2026)
 
 ### New Features
 
@@ -122,7 +122,8 @@ HomeSpan provides a microcontroller-focused implementation of Apple's HomeKit Ac
 * **Added new `homeSpan.setControlTimes(uint32_t comTime, uint32_t resTime)` method**
   * allows users to customize the hold times required for the Control Button to trigger either the Command Mode or a Factory Reset
 * **Redirected `setVal()` out-of-range warnings to WEBLOG instead of LOG0 so these warnings will be displayed in both the Serial Monitor and the Web Log**
-            
+* **Updated `CUSTOM_CHAR()` logic so that the HAP range and HAP description are automatically set based on the range and name specified in the macro**
+              
 See [Releases](https://github.com/HomeSpan/HomeSpan/releases) for details on all changes and bug fixes included in this update.
 
 # HomeSpan Resources
