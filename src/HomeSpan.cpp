@@ -204,6 +204,7 @@ void Span::pollTask() {
       LOG0("\n*** WARNING!  Internal Free Heap of %d bytes is less than Low-Memory Threshold of %d bytes.  Device *may* run out of Internal memory.\n\n",
           heap_caps_get_free_size(MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL),DEFAULT_LOW_MEM_THRESHOLD);
 
+    #ifdef HOMEKIT_WIFI_CREDENTIALS
     if(!ethernetEnabled && !strlen(network.wifiData.ssid)){
       LOG0("*** WIFI CREDENTIALS DATA NOT FOUND.  ");
       if(autoStartAPEnabled){
@@ -211,8 +212,9 @@ void Span::pollTask() {
         processSerialCommand("A");
       } else {
         LOG0("YOU MAY CONFIGURE BY TYPING 'W <RETURN>'.\n\n");
-      }      
+      }
     }
+    #endif // HOMEKIT_WIFI_CREDENTIALS
                 
     if(controlButton)
       controlButton->reset();
@@ -227,9 +229,11 @@ void Span::pollTask() {
   if(!ethernetEnabled && strlen(network.wifiData.ssid) && !(connected%2) && millis()>alarmConnect){
     if(verboseWifiReconnect)
       addWebLog(true,"Trying to connect to %s.  Waiting %ld sec...",network.wifiData.ssid,wifiTimeCounter/1000);
-    
+
     alarmConnect=millis()+(wifiTimeCounter++);
+    #ifdef HOMEKIT_WIFI_CREDENTIALS
     wifiBegin(network.wifiData.ssid,network.wifiData.pwd);
+    #endif // HOMEKIT_WIFI_CREDENTIALS
   }
 
   if(rescanStatus==RESCAN_PENDING && millis()>rescanAlarm){
@@ -562,8 +566,10 @@ void Span::configureNetwork(){
   LOG0("Model Name:    %s\n",modelName);
   LOG0("Setup ID:      %s\n\n",qrID);
   
+  #ifdef HOMEKIT_INIT_MDNS
   MDNS.begin(hostName);                         // set server host name (.local implied)
   MDNS.setInstanceName(displayName);            // set server display name
+  #endif // HOMEKIT_INIT_MDNS
   MDNS.addService("_hap","_tcp",tcpPortNum);    // advertise HAP service on specified port
 
   // add MDNS (Bonjour) TXT records for configurable as well as fixed values (HAP Table 6-7)
@@ -1003,18 +1009,20 @@ void Span::processSerialCommand(const char *c){
     break;
 
     case 'F': {
-      
+
       nvs_erase_all(hapNVS);
-      nvs_commit(hapNVS);      
+      nvs_commit(hapNVS);
       nvs_erase_all(wifiNVS);
-      nvs_commit(wifiNVS);   
+      nvs_commit(wifiNVS);
       nvs_erase_all(charNVS);
       nvs_commit(charNVS);
       nvs_erase_all(otaNVS);
       nvs_commit(otaNVS);
-      WiFi.begin("none");  
+      #ifdef HOMEKIT_WIFI_CREDENTIALS
+      WiFi.begin("none");
       LOG0("\n*** FACTORY RESET!  Restarting...\n\n");
       reboot();
+      #endif // HOMEKIT_WIFI_CREDENTIALS
     }
     break;
 
@@ -1463,9 +1471,12 @@ void Span::setStatus(HS_STATUS hst){
 ///////////////////////////////
 
 void Span::resetStatus(){
+  #ifdef HOMEKIT_WIFI_CREDENTIALS
   if(!ethernetEnabled && strlen(network.wifiData.ssid)==0)
     setStatus(HS_WIFI_NEEDED);
-  else if(!(connected%2))
+  else
+  #endif // HOMEKIT_WIFI_CREDENTIALS
+  if(!(connected%2))
     setStatus(ethernetEnabled?HS_ETH_CONNECTING:HS_WIFI_CONNECTING);
   else if(!HAPClient::nAdminControllers())
     setStatus(HS_PAIRING_NEEDED);
