@@ -32,7 +32,7 @@
  
 #define     HS_MAJOR  1
 #define     HS_MINOR  9
-#define     HS_PATCH  1
+#define     HS_PATCH  4
 
 //////////////////////////////////////////////////////
 
