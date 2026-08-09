@@ -421,17 +421,15 @@ void Span::checkConnect(){
   else
     asprintf(&hostName,"%s%s",hostNameBase,hostNameSuffix);
 
-  char *d;
-  sscanf(hostName,"%m[A-Za-z0-9-]",&d);
+  size_t hostNameLen=strlen(hostName);                                                                                    // note: do NOT use sscanf() with the %m modifier here - newlib-nano's scanf does not implement it
+  size_t validLen=strspn(hostName,"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-");                      // length of leading run of allowed characters
 
-  if(strlen(hostName)>255 || hostName[0]=='-' || hostName[strlen(hostName)-1]=='-' || strlen(hostName)!=strlen(d)){
+  if(hostNameLen==0 || hostNameLen>255 || hostName[0]=='-' || hostName[hostNameLen-1]=='-' || hostNameLen!=validLen){
     LOG0("\n*** Error:  Can't start MDNS due to invalid hostname '%s'.\n",hostName);
     LOG0("*** Hostname must consist of 255 or less alphanumeric characters or a hyphen, except that the hyphen cannot be the first or last character.\n");
     LOG0("*** PROGRAM HALTED!\n\n");
     while(1);
   }
-
-  free(d);
 
   LOG0("\nStarting MDNS...\n\n");
   LOG0("HostName:      %s.local:%d\n",hostName,tcpPortNum);
